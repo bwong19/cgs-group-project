@@ -1,4 +1,4 @@
-from abc import ABCMeta, abstractmethod
+from abc import abstractmethod
 import math
 import mmh3
 from bitarray import bitarray
@@ -7,7 +7,6 @@ from bucket import Bucket
 import random
 
 class CuckooTemplate():
-    __metaclass__ = ABCMeta
 
     DEFAULT_ERROR_RATE = 0.0001
 
@@ -95,4 +94,21 @@ class CuckooFilter(CuckooTemplate):
         # len(pair_stack) should = len(index_stack)
         # reaching full capacity, need to rewind pair_stack and restore them
 
-    
+    def lookup(self, item):
+        fingerprint = self.fingerprint(item)
+        for index in self.indices(item, fingerprint):
+            if self.buckets[index] is None:
+                self.buckets[index] = Bucket(size=self.bucket_size)
+            if self.buckets[index].contains(fingerprint):
+                return True
+        return False
+
+    def delete(self, item):
+        fingerprint = self.fingerprint(item)
+        for index in self.indices(item, fingerprint):
+            if self.buckets[index] is None:
+                self.buckets[index] = Bucket(size=self.bucket_size)
+            if self.buckets[index].delete(fingerprint):
+                self.size -= 1
+                return True
+        return False
