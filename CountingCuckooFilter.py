@@ -76,14 +76,14 @@ class CuckooFilter(CuckooTemplate):
         index = random.choice(indices)
         orig_index = index
         curr_pair = (fingerprint, 1)
-        pair_stack = [curr_pair]
-        index_stack = [index]
+        #pair_stack = [curr_pair]
+        #index_stack = [index]
         for _ in range(self.max_kicks):
             curr_pair = self.buckets[index].swap(curr_pair)
-            pair_stack.append(curr_pair)
+            #pair_stack.append(curr_pair)
             fingerprint = curr_pair[0]
             index = (index ^ self.index(fingerprint.tobytes())) % self.capacity
-            index_stack.append(index)
+            #index_stack.append(index)
             if self.buckets[index] is None:
                 # initialize bucket if needed
                 self.buckets[index] = Bucket(size=self.bucket_size)
@@ -92,7 +92,7 @@ class CuckooFilter(CuckooTemplate):
                 return orig_index
             
         # len(pair_stack) should = len(index_stack)
-        # reaching full capacity, need to rewind pair_stack and restore them
+        # reaching full capacity, need to rewind pair_stack and restore them, NOT HANDELED THIS TIME
 
     def lookup(self, item):
         fingerprint = self.fingerprint(item)
